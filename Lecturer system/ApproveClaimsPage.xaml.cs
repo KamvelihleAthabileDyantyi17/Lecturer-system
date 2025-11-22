@@ -1,56 +1,77 @@
-﻿using Lecturer_system.Data;
-using Lecturer_system.Models;
-using Microsoft.EntityFrameworkCore; // Needed for Include()
-using System;
+﻿using System;
+using System.Diagnostics; // <--- CRITICAL: Needed to open files
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.EntityFrameworkCore; // <--- CRITICAL: Needed for .Include()
+using Lecturer_system.Data;
+using Lecturer_system.Models;
 
 namespace Lecturer_system
 {
     public partial class ApproveClaimsPage : Page
     {
-        // --- 1. FIELD NO LONGER NEEDED ---
-        // private readonly int _managerId; 
-
-        // --- 2. CONSTRUCTOR IS NOW PARAMETER-LESS ---
         public ApproveClaimsPage()
         {
             InitializeComponent();
             LoadPendingClaims();
         }
 
+        // 1. LOAD DATA
         private void LoadPendingClaims()
         {
-            // --- 3. ADD SAFETY CHECK ---
-            if (AppSession.CurrentUser == null)
-            {
-                MessageBox.Show("Error: You are not logged in. Returning to login screen.", "Session Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                // Navigate back to login
-                var mainWindow = Application.Current.MainWindow as MainWindow;
-                if (mainWindow != null)
-                {
-                    LoginWindow login = new LoginWindow();
-                    login.Show();
-                    mainWindow.Close();
-                }
-                return;
-            }
+            // Safety Check
+            if (AppSession.CurrentUser == null) return;
 
             using (var context = new AppDbContext())
             {
-                // This query is perfect, it doesn't need the ID.
                 var pendingClaims = context.Claims
-                                           .Include(c => c.User) // Good! This gets the Lecturer's name
+                                           .Include(c => c.User) // Loads the Lecturer Name
                                            .Where(c => c.Status == "Pending")
                                            .OrderBy(c => c.DateSubmitted)
                                            .ToList();
 
+                // Make sure your DataGrid in XAML is named 'PendingClaimsGrid'
                 PendingClaimsGrid.ItemsSource = pendingClaims;
             }
         }
 
+        // 2. VIEW DOCUMENT (The Missing Method)
+        private void ViewDocButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is string filePath)
+            {
+                if (string.IsNullOrEmpty(filePath))
+                {
+                    MessageBox.Show("No document attached to this claim.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                if (File.Exists(filePath))
+                {
+                    try
+                    {
+                        // Launches the file (PDF/Word)
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = filePath,
+                            UseShellExecute = true
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Could not open file: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("File not found. It may have been moved or deleted.", "File Missing", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+        }
+
+        // 3. APPROVE BUTTON
         private void ApproveButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.Tag is int claimId)
@@ -59,6 +80,7 @@ namespace Lecturer_system
             }
         }
 
+        // 4. REJECT BUTTON
         private void RejectButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.Tag is int claimId)
@@ -67,14 +89,13 @@ namespace Lecturer_system
             }
         }
 
+        // 5. UPDATE DATABASE HELPER
         private void UpdateClaimStatus(int claimId, string newStatus)
         {
-            // --- 4. ADD SAFETY CHECK (CRITICAL) ---
-            // We must check if the user is logged in *before* we use their ID.
             if (AppSession.CurrentUser == null)
             {
-                MessageBox.Show("Error: Session lost. Please log in again.", "Session Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return; // Stop the update
+                MessageBox.Show("Session lost. Please log in again.");
+                return;
             }
 
             using (var context = new AppDbContext())
@@ -84,23 +105,20 @@ namespace Lecturer_system
                 {
                     claim.Status = newStatus;
 
+                    // Create Approval Record for History
                     var approval = new Approval
                     {
                         ClaimId = claimId,
                         ApprovalStatus = newStatus,
                         ApprovalDate = DateTime.Now,
-
-                        // --- 5. GET MANAGER ID FROM APPSESSION ---
-                        ApprovedByUserId = AppSession.CurrentUser.UserId, // <-- USE THE GLOBAL SESSION USER ID
-
-                        Notes = $"Claim {newStatus.ToLower()}."
+                        ApprovedByUserId = AppSession.CurrentUser.UserId,
+                        Notes = $"Claim {newStatus} by Coordinator."
                     };
                     context.Approvals.Add(approval);
 
                     context.SaveChanges();
 
-                    MessageBox.Show($"Claim {claimId} has been {newStatus.ToLower()}.", "Status Updated", MessageBoxButton.OK, MessageBoxImage.Information);
-
+                    MessageBox.Show($"Claim {newStatus} successfully!");
                     LoadPendingClaims(); // Refresh the list
                 }
             }

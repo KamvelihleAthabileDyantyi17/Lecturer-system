@@ -1,37 +1,73 @@
-﻿<StackPanel Grid.Column="0" Background="#F0F0F0">
+﻿<Window x:Class="Lecturer_system.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Contract Monthly Claim System" 
+        Height="600" Width="900"
+        WindowStartupLocation="CenterScreen">
 
-    <TextBlock Text="Menu" FontWeight="Bold" Margin="10,20,10,10" FontSize="16"/>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-    <Button x:Name="SubmitClaimButton" 
-                    Content="Submit New Claim" 
-                    Margin="10,5" 
-                    Padding="5"
-                    Click="SubmitClaimButton_Click"/>
+        <Border Grid.Column="0" Background="#F8F9FA" BorderBrush="#DDD" BorderThickness="0,0,1,0">
+            <StackPanel Margin="10">
 
-    <Button x:Name="MyClaimsButton" 
-                    Content="My Claims" 
-                    Margin="10,5" 
-                    Padding="5"
-                    Click="MyClaimsButton_Click"/>
+                <TextBlock Text="CMCS MENU" 
+                           FontSize="18" 
+                           FontWeight="Bold" 
+                           Foreground="#333" 
+                           Margin="10,20,10,20" 
+                           HorizontalAlignment="Center"/>
 
-    <Button x:Name="ApproveClaimsButton" 
-                    Content="Approve Claims" 
-                    Margin="10,5" 
-                    Padding="5"
-                    Click="ApproveClaimsButton_Click"/>
+                <TextBlock Text="Lecturer" FontWeight="Bold" Foreground="Gray" Margin="5,10,0,5" FontSize="12"/>
 
-    <Button x:Name="HRDashboardButton" 
-                    Content="HR Dashboard" 
-                    Margin="10,5" 
-                    Padding="5"
-                    Click="HRDashboardButton_Click"/>
+                <Button x:Name="SubmitClaimButton" 
+                        Content="📝 Submit New Claim" 
+                        Height="40"
+                        Margin="0,5" 
+                        Click="SubmitClaimButton_Click"/>
 
-    <Rectangle Height="1" Fill="Gray" Margin="10,20"/>
+                <Button x:Name="MyClaimsButton" 
+                        Content="📂 My Claims" 
+                        Height="40"
+                        Margin="0,5" 
+                        Click="MyClaimsButton_Click"/>
 
-    <Button x:Name="LogoutButton" 
-                    Content="Logout" 
-                    Margin="10,5" 
-                    Background="#FFCDD2"
-                    Click="LogoutButton_Click"/>
+                <TextBlock Text="Management" FontWeight="Bold" Foreground="Gray" Margin="5,15,0,5" FontSize="12"/>
 
-</StackPanel>
+                <Button x:Name="ApproveClaimsButton" 
+                        Content="✅ Approve Claims" 
+                        Height="40"
+                        Margin="0,5" 
+                        Click="ApproveClaimsButton_Click"/>
+
+                <Button x:Name="HRDashboardButton" 
+                        Content="💼 HR Dashboard" 
+                        Height="40"
+                        Margin="0,5" 
+                        Click="HRDashboardButton_Click"/>
+
+                <Rectangle Height="1" Fill="#DDD" Margin="0,20"/>
+
+                <Button x:Name="LogoutButton" 
+                        Content="🚪 Logout" 
+                        Height="40"
+                        Background="#FFEBEE"
+                        Foreground="#D32F2F"
+                        BorderBrush="#FFCDD2"
+                        Click="LogoutButton_Click"/>
+
+            </StackPanel>
+        </Border>
+
+        <Frame x:Name="MainFrame" 
+               Grid.Column="1" 
+               NavigationUIVisibility="Hidden" 
+               Background="White"/>
+    </Grid>
+</Window>

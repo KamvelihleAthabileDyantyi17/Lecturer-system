@@ -73,7 +73,7 @@ namespace Lecturer_system
 
         private void MyClaimsButton_Click(object sender, RoutedEventArgs e)
         {
-            // If you haven't built this yet, just comment it out
+            // UNCOMMENT THIS LINE NOW:
             MainFrame.Navigate(new MyClaimsPage());
         }
 
