@@ -1,20 +1,89 @@
 ﻿<Page x:Class="Lecturer_system.MyClaimsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Title="My Claims">
-    <Grid Margin="15">
-        <StackPanel>
-            <TextBlock Text="My Submitted Claims" FontSize="24" Margin="0,0,0,20"/>
+      Title="My Claims History"
+      Background="White">
 
-            <DataGrid x:Name="ClaimsGrid" AutoGenerateColumns="False" IsReadOnly="True">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Claim Period" Binding="{Binding ClaimPeriod, StringFormat='d'}" Width="*"/>
-                    <DataGridTextColumn Header="Date Submitted" Binding="{Binding DateSubmitted, StringFormat='d'}" Width="*"/>
-                    <DataGridTextColumn Header="Hours Worked" Binding="{Binding HoursWorked}" Width="Auto"/>
-                    <DataGridTextColumn Header="Total Amount" Binding="{Binding TotalAmount, StringFormat='C'}" Width="Auto"/>
-                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
-                </DataGrid.Columns>
-            </DataGrid>
+    <Page.Resources>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="#f0f0f0"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="My Claim History" 
+                       FontSize="28" 
+                       FontWeight="SemiBold" 
+                       Foreground="#333"/>
+            <TextBlock Text="Track the status of your submitted claims." 
+                       FontSize="14" 
+                       Foreground="Gray"
+                       Margin="0,5,0,0"/>
         </StackPanel>
+
+        <DataGrid x:Name="ClaimsGrid" 
+                  Grid.Row="1" 
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False"
+                  IsReadOnly="True"
+                  RowHeight="40"
+                  GridLinesVisibility="Horizontal"
+                  BorderThickness="1"
+                  BorderBrush="#cccccc">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date Submitted" 
+                                    Binding="{Binding DateSubmitted, StringFormat=yyyy-MM-dd}" 
+                                    Width="150"/>
+
+                <DataGridTextColumn Header="Hours" 
+                                    Binding="{Binding HoursWorked}" 
+                                    Width="80"/>
+
+                <DataGridTextColumn Header="Rate" 
+                                    Binding="{Binding HourlyRate, StringFormat=R {0:N2}}" 
+                                    Width="100"/>
+
+                <DataGridTextColumn Header="Total" 
+                                    Binding="{Binding TotalAmount, StringFormat=R {0:N2}}" 
+                                    FontWeight="Bold"
+                                    Width="120"/>
+
+                <DataGridTextColumn Header="Status" 
+                                    Binding="{Binding Status}" 
+                                    Width="*"
+                                    FontWeight="SemiBold">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Status}" Value="Approved">
+                                    <Setter Property="Foreground" Value="Green"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="Rejected">
+                                    <Setter Property="Foreground" Value="Red"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="Pending">
+                                    <Setter Property="Foreground" Value="Orange"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="File" 
+                                    Binding="{Binding SupportingDocPath}"
+                                    Width="200"
+                                    FontSize="10"
+                                    Foreground="Gray"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Page>

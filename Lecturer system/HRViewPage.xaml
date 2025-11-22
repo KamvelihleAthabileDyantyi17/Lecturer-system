@@ -1,0 +1,33 @@
+﻿<Page x:Class="Lecturer_system.HRViewPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="HR Dashboard"
+      Background="White"
+      Loaded="Page_Loaded" Width="455" Height="295">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="HR Invoice Generation" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+
+        <DataGrid x:Name="ApprovedClaimsGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Claim ID" Binding="{Binding ClaimId}" Width="60"/>
+                <DataGridTextColumn Header="Lecturer" Binding="{Binding User.Name}" Width="*"/>
+                <DataGridTextColumn Header="Total" Binding="{Binding TotalAmount, StringFormat=R {0:N2}}" FontWeight="Bold" Width="100"/>
+
+                <DataGridTemplateColumn Header="Action" Width="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Generate Invoice" Tag="{Binding ClaimId}" Click="GenerateInvoice_Click" Background="#007bff" Foreground="White"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>

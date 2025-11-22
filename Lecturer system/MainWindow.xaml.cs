@@ -1,78 +1,99 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using Lecturer_system.Models; // <-- 1. ADD THIS to access AppSession
+﻿using Lecturer_system.Models;
+using System.Windows;
 
 namespace Lecturer_system
 {
     public partial class MainWindow : Window
     {
-        // --- 3. FIELDS ARE NO LONGER NEEDED ---
-        // We will read directly from AppSession.CurrentUser
-        // private readonly string _userRole;
-        // private readonly int _loggedInUserId;
-
-        // --- 4. CONSTRUCTOR IS NOW PARAMETER-LESS ---
         public MainWindow()
         {
             InitializeComponent();
-
-            // --- 5. ADD SAFETY CHECK ---
-            // What if someone runs this window without logging in?
-            if (AppSession.CurrentUser == null)
-            {
-                // No user is logged in. Go back to login screen.
-                LoginWindow loginWindow = new LoginWindow();
-                loginWindow.Show();
-                this.Close(); // Close this (broken) MainWindow
-                return; // Stop running the rest of the code
-            }
-
-            // If we are here, a user *is* logged in.
-            SetupUIForRole();
+            InitializeDashboard();
         }
 
-        private void SetupUIForRole()
+        private void InitializeDashboard()
         {
-            // --- 6. READ ROLE FROM APPSESSION ---
-            string role = AppSession.CurrentUser.Role;
+            // SAFETY CHECK: If no one is logged in, go back to login
+            if (AppSession.CurrentUser == null)
+            {
+                LoginWindow login = new LoginWindow();
+                login.Show();
+                this.Close();
+                return;
+            }
 
-            if (role == "Lecturer")
+            string userRole = AppSession.CurrentUser.Role;
+
+            // ==================================================
+            // 1. HIDE EVERYTHING FIRST (Reset state)
+            // ==================================================
+            SubmitClaimButton.Visibility = Visibility.Collapsed;
+            MyClaimsButton.Visibility = Visibility.Collapsed;
+            ApproveClaimsButton.Visibility = Visibility.Collapsed;
+            // We need to add a button for HR in your XAML too, let's assume its called 'HRButton'
+            // HRButton.Visibility = Visibility.Collapsed; 
+
+            // ==================================================
+            // 2. SHOW BUTTONS BASED ON ROLE
+            // ==================================================
+
+            if (userRole == "Lecturer")
             {
                 SubmitClaimButton.Visibility = Visibility.Visible;
                 MyClaimsButton.Visibility = Visibility.Visible;
-                ApproveClaimsButton.Visibility = Visibility.Collapsed;
 
-                // Navigate to a default page for the Lecturer
-                MainFrame.Navigate(new MyClaimsPage());
+                // Auto-Navigate to Submit Page
+                MainFrame.Navigate(new SubmitClaimPage());
             }
-            else if (role == "Manager") // <-- You used "Manager", so I'll use it too.
+            else if (userRole == "Coordinator" || userRole == "Manager")
             {
-                SubmitClaimButton.Visibility = Visibility.Collapsed;
-                MyClaimsButton.Visibility = Visibility.Collapsed;
                 ApproveClaimsButton.Visibility = Visibility.Visible;
 
-                // Navigate to a default page for the Manager
+                // Auto-Navigate to Approval Page
                 MainFrame.Navigate(new ApproveClaimsPage());
+            }
+            else if (userRole == "HR")
+            {
+                // Create this button in XAML first (I'll show you how below)
+                HRDashboardButton.Visibility = Visibility.Visible;
+
+                // Auto-Navigate to HR Page
+                MainFrame.Navigate(new HRViewPage());
             }
         }
 
-        // --- 7. UPDATE BUTTON CLICKS ---
-        // The pages (SubmitClaimPage, etc.) will get the User ID
-        // from the AppSession themselves, so we don't pass any parameters.
+        // ==================================================
+        // 3. BUTTON CLICKS
+        // ==================================================
 
         private void SubmitClaimButton_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new SubmitClaimPage()); // No parameter needed
+            MainFrame.Navigate(new SubmitClaimPage());
         }
 
         private void MyClaimsButton_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new MyClaimsPage()); // No parameter needed
+            // If you haven't built this yet, just comment it out
+            MainFrame.Navigate(new MyClaimsPage());
         }
 
         private void ApproveClaimsButton_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new ApproveClaimsPage()); // No parameter needed
+            MainFrame.Navigate(new ApproveClaimsPage());
+        }
+
+        private void HRDashboardButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new HRViewPage());
+        }
+
+        // OPTIONAL: Logout Button Logic
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            AppSession.CurrentUser = null; // Clear session
+            LoginWindow login = new LoginWindow();
+            login.Show();
+            this.Close();
         }
     }
 }

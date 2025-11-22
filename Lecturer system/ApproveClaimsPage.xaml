@@ -74,12 +74,27 @@
 
                 <DataGridTextColumn Header="Hours" 
                                     Binding="{Binding HoursWorked}" 
-                                    Width="100"/>
+                                    Width="80"/>
 
                 <DataGridTextColumn Header="Total Due" 
                                     Binding="{Binding TotalAmount, StringFormat=R {0:N2}}" 
                                     FontWeight="Bold"
                                     Width="120"/>
+
+                <DataGridTemplateColumn Header="Proof" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="📄 View" 
+                                    Tag="{Binding SupportingDocPath}"
+                                    Click="ViewDocButton_Click"
+                                    Background="#17a2b8" 
+                                    Foreground="White"
+                                    BorderThickness="0"
+                                    Padding="5,2"
+                                    Cursor="Hand"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
                 <DataGridTemplateColumn Header="Actions" Width="200">
                     <DataGridTemplateColumn.CellTemplate>

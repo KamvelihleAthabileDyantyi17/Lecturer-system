@@ -1,13 +1,11 @@
-﻿using Lecturer_system.Models;
+﻿using System;
 
 namespace Lecturer_system.Models
 {
     public static class AppSession
     {
-        /// <summary>
-        /// Stores the currently logged-in user's data.
-        /// Will be 'null' if no one is logged in.
-        /// </summary>
-        public static User? CurrentUser { get; set; }
+        // This static variable holds the logged-in user's info
+        // so we can access it from ANY page in the app.
+        public static User CurrentUser { get; set; }
     }
 }
