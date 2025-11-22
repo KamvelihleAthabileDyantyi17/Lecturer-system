@@ -1,18 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System;
 
 namespace Lecturer_system.Models
 {
-    internal class Approval
+    public class Approval
     {
-        public int UserId { get; set; } // Primary Key
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string PasswordHash { get; set; }
-        public string Role { get; set; } // e.g., "Lecturer", "Manager"
+        [Key]
+        public int ApprovalId { get; set; }
+        public string ApprovalStatus { get; set; }
+        public DateTime ApprovalDate { get; set; }
+        public string? Notes { get; set; }
+
+        // Foreign Key relationship to Claim
+        public int ClaimId { get; set; }
+        public virtual Claim Claim { get; set; }
+
+        // Foreign Key relationship to User (who approved/rejected)
+        public int ApprovedByUserId { get; set; }
+        public virtual User ApprovedByUser { get; set; }
     }
 }

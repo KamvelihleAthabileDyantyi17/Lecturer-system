@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lecturer_system.Models
 {
-    internal class Claim
+    public class Claim
     {
         public int ClaimId { get; set; } // Primary Key
         public DateTime ClaimPeriod { get; set; }

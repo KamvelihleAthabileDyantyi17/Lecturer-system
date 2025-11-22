@@ -1,29 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+// ... other usings
 
 namespace Lecturer_system.Models
 {
-    internal class User
+    public class User
     {
-        public string Email { get; internal set; }
-
-        public class Approval
-        {
-            public int ApprovalId { get; set; } // Primary Key
-            public string ApprovalStatus { get; set; } // "Approved" or "Rejected"
-            public DateTime ApprovalDate { get; set; }
-            public string? Notes { get; set; } // Nullable string for optional notes
-
-            // Foreign Key relationship to Claim
-            public int ClaimId { get; set; }
-            public virtual Claim Claim { get; set; }
-
-            // Foreign Key relationship to User (who approved/rejected)
-            public int ApprovedByUserId { get; set; }
-            public virtual User ApprovedByUser { get; set; }
-        }
+        public int UserId { get; set; } // Primary Key
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string PasswordHash { get; set; }
+        public string Role { get; set; } // e.g., "Lecturer", "Manager"
     }
-};
+
+    // DELETE THE APPROVAL CLASS THAT WAS HERE
+}
